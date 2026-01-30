@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyberShield | SOC Phishing Intelligence</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#05080f;
+      --panel:#0b1420cc;
+      --accent:#00f5d4;
+      --danger:#ff4d4f;
+      --safe:#2bdc74;
+      --muted:#7f93aa;
+      --border:#122332;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:Inter,system-ui;
+      background:
+        radial-gradient(1000px 500px at 50% -100px, #0a1f2b, transparent),
+        linear-gradient(180deg, #02050a, #060b13);
+      color:#e6f0ff;
+    }
+
+    /* TOP BAR */
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:16px 26px;
+      border-bottom:1px solid var(--border);
+      backdrop-filter: blur(8px);
+    }
+
+    .brand{
+      font-family:Orbitron;
+      color:var(--accent);
+      font-size:20px;
+      letter-spacing:1px;
+    }
+
+    .status{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .pulse{
+      width:10px;
+      height:10px;
+      background:var(--safe);
+      border-radius:50%;
+      box-shadow:0 0 12px var(--safe);
+      animation:pulse 1.5s infinite;
+    }
+
+    @keyframes pulse{
+      0%{transform:scale(1);opacity:1}
+      100%{transform:scale(2);opacity:0}
+    }
+
+    /* LAYOUT */
+    .grid{
+      display:grid;
+      grid-template-columns:260px 1fr;
+      min-height:calc(100vh - 64px);
+    }
+
+    .sidebar{
+      border-right:1px solid var(--border);
+      padding:20px;
+      background:#050b14;
+    }
+
+    .nav a{
+      display:block;
+      padding:12px 14px;
+      border-radius:10px;
+      margin-bottom:6px;
+      color:#cfe4ff;
+      cursor:pointer;
+      transition:.2s;
+    }
+
+    .nav a.active,
+    .nav a:hover{
+      background:#0f2b2a;
+      color:var(--accent);
+    }
+
+    .content{
+      padding:26px;
+    }
+
+    /* CARDS */
+    .cards{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:16px;
+      margin-bottom:20px;
+    }
+
+    .card{
+      background:var(--panel);
+      backdrop-filter: blur(10px);
+      border-radius:16px;
+      padding:18px;
+      border:1px solid var(--border);
+    }
+
+    .card h4{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      letter-spacing:.5px;
+      text-transform:uppercase;
+    }
+
+    .big{
+      font-size:30px;
+      font-weight:700;
+      margin-top:6px;
+      font-family:Orbitron;
+    }
+
+    /* PANELS */
+    .panel{
+      background:var(--panel);
+      border-radius:20px;
+      padding:22px;
+      border:1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+
+    .panel h3{
+      margin-top:0;
+      font-family:Orbitron;
+      letter-spacing:1px;
+      color:var(--accent);
+    }
+
+    .scan{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:12px;
+    }
+
+    input{
+      padding:14px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:#060d16;
+      color:#fff;
+      outline:none;
+    }
+
+    input:focus{
+      border-color:var(--accent);
+    }
+
+    button{
+      padding:14px 22px;
+      border-radius:14px;
+      border:none;
+      background:linear-gradient(135deg, #00f5d4, #00bbf9);
+      font-weight:700;
+      cursor:pointer;
+      color:#001;
+      transition:.2s;
+    }
+
+    button:hover{
+      transform:translateY(-2px);
+      box-shadow:0 0 20px #00f5d466;
+    }
+
+    .result-box{
+      margin-top:16px;
+      padding:14px;
+      border-radius:12px;
+      background:#050b14;
+      border:1px solid var(--border);
+    }
+
+    .safe{color:var(--safe)}
+    .danger{color:var(--danger)}
+
+    /* RISK BAR */
+    .risk-bar{
+      height:8px;
+      border-radius:10px;
+      background:#091522;
+      margin-top:8px;
+      overflow:hidden;
+    }
+
+    .risk-fill{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg, var(--safe), var(--danger));
+      transition:.5s;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+    }
+
+    th,td{
+      padding:12px;
+      border-bottom:1px solid var(--border);
+      font-size:14px;
+    }
+
+    th{
+      color:var(--muted);
+      text-align:left;
+    }
+
+    @media(max-width:1000px){
+      .grid{grid-template-columns:1fr}
+      .sidebar{display:none}
+      .cards{grid-template-columns:repeat(2,1fr)}
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="topbar">
+  <div class="brand">🛡️ CyberShield SOC</div>
+  <div class="status">
+    <div class="pulse"></div>
+    Threat Monitoring: ACTIVE
+  </div>
+</div>
+
+<div class="grid">
+
+  <aside class="sidebar">
+    <nav class="nav">
+      <a class="active" onclick="showPanel('scan',this)">Threat Scan</a>
+      <a onclick="showPanel('history',this)">Scan Logs</a>
+      <a onclick="showPanel('settings',this)">System Status</a>
+    </nav>
+  </aside>
+
+  <main class="content">
+
+    <!-- STATS -->
+    <section class="cards">
+      <div class="card">
+        <h4>Total Scans</h4>
+        <div class="big" id="total">0</div>
+      </div>
+      <div class="card">
+        <h4>Threats Detected</h4>
+        <div class="big danger" id="phish">0</div>
+      </div>
+      <div class="card">
+        <h4>Safe URLs</h4>
+        <div class="big safe" id="safe">0</div>
+      </div>
+      <div class="card">
+        <h4>Engine Status</h4>
+        <div class="big safe">ONLINE</div>
+      </div>
+    </section>
+
+    <!-- SCAN PANEL -->
+    <section class="panel" id="scan">
+      <h3>URL Threat Analysis</h3>
+      <div class="scan">
+        <input id="url" placeholder="https://suspicious-site.com">
+        <button onclick="scan()">Analyze</button>
+      </div>
+
+      <div class="result-box" id="result">
+        Awaiting scan...
+        <div class="risk-bar">
+          <div class="risk-fill" id="riskFill"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HISTORY -->
+    <section class="panel" id="history" style="display:none;">
+      <h3>Threat Intelligence Logs</h3>
+      <button onclick="clearHistory()">Clear Logs</button>
+      <table>
+        <thead>
+          <tr><th>URL</th><th>Classification</th><th>Risk Score</th></tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="panel" id="settings" style="display:none;">
+      <h3>System Status</h3>
+      <p>Detection Engine: AI + Rule-Based + DNS Reputation</p>
+      <p>Model Version: v2.4 SOC Edition</p>
+      <p>Last Update: Live Feed Connected</p>
+    </section>
+
+  </main>
+</div>
+
+<script>
+let historyData = JSON.parse(localStorage.getItem("scanHistory")) || [];
+updateHistoryUI();
+
+function showPanel(id, el){
+  document.querySelectorAll(".panel").forEach(p=>p.style.display="none");
+  document.getElementById(id).style.display="block";
+  document.querySelectorAll(".nav a").forEach(a=>a.classList.remove("active"));
+  el.classList.add("active");
+}
+
+async function scan(){
+  const url = document.getElementById("url").value.trim();
+  if(!url) return;
+
+  const res = await fetch("/api/check",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({url})
+  });
+
+  const data = await res.json();
+  const riskPercent = Math.min(100, data.risk_score * 10);
+
+  document.getElementById("result").innerHTML =
+    `<b class="${data.result.includes("Phishing")?"danger":"safe"}">
+      ${data.result}
+    </b> (Risk Score: ${data.risk_score}/10)
+    <div class="risk-bar">
+      <div class="risk-fill" id="riskFill" style="width:${riskPercent}%"></div>
+    </div>`;
+
+  historyData.unshift({url, result:data.result, risk:data.risk_score});
+  localStorage.setItem("scanHistory", JSON.stringify(historyData));
+  updateHistoryUI();
+}
+
+function updateHistoryUI(){
+  const rows = document.getElementById("rows");
+  rows.innerHTML="";
+  historyData.forEach(h=>{
+    rows.innerHTML += `<tr>
+      <td>${h.url}</td>
+      <td class="${h.result.includes("Phishing")?"danger":"safe"}">${h.result}</td>
+      <td>${h.risk}/10</td>
+    </tr>`;
+  });
+
+  document.getElementById("total").innerText = historyData.length;
+  document.getElementById("phish").innerText =
+    historyData.filter(h=>h.result.includes("Phishing")).length;
+  document.getElementById("safe").innerText =
+    historyData.filter(h=>h.result.includes("Safe")).length;
+}
+
+function clearHistory(){
+  localStorage.removeItem("scanHistory");
+  historyData=[];
+  updateHistoryUI();
+}
+</script>
+
+</body>
+</html>
