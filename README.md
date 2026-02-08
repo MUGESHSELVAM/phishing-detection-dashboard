@@ -8,7 +8,7 @@ A Flask-based phishing detection system with:
 - SOC-style dashboard UI
 
 ## How to Run
-```bash
+bash
 pip install flask flask-cors
 python app.py
 
@@ -45,3 +45,47 @@ phishing-url-detector/
 │   └── pyvenv.cfg
 │
 └── .gitignore                 # Ensure venv/, __pycache__/ ignored
+
+## 📌 Project Overview
+This project is a **web-based phishing detection dashboard** designed to analyze suspicious URLs and display security insights in a user-friendly interface.
+
+The goal is to demonstrate **phishing analysis concepts, web security awareness, and frontend visualization**.
+
+---
+
+## 🧠 Key Features
+- URL analysis interface
+- Detection result display (Safe / Suspicious)
+- Security-focused UI dashboard
+- Educational use for understanding phishing patterns
+
+---
+
+## 🛠️ Technologies Used
+- HTML
+- CSS
+- JavaScript
+- Basic security logic (rule-based)
+
+---
+
+## 🔐 Cyber Security Concepts Demonstrated
+- Phishing techniques (educational)
+- URL analysis fundamentals
+- Web security awareness
+- Secure UI design thinking
+
+---
+
+## ⚠️ Disclaimer
+This project is created **strictly for educational and defensive learning purposes**.
+
+---
+
+## 📷 Screenshots
+(Add screenshots here)
+
+---
+
+## 👤 Author
+**Mugesh Selvam K**
