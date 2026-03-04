@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+  <h1>Admin Dashboard</h1>
+  <p>Total scans: {{ total }}</p>
+  <p>Phishing detected: {{ phishing_count }}</p>
+  <p>Legitimate: {{ legitimate_count }}</p>
+
+  <h2>Recent scans</h2>
+  <table class="table table-striped">
+    <thead><tr><th>URL</th><th>Prediction</th><th>Confidence</th><th>Timestamp</th></tr></thead>
+    <tbody>
+      {% for r in recent %}
+      <tr>
+        <td>{{ r.url }}</td>
+        <td>{{ r.prediction }}</td>
+        <td>{{ r.confidence_score }}</td>
+        <td>{{ r.timestamp }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h2>Risk Distribution</h2>
+  <canvas id="riskChart" width="600" height="200"></canvas>
+
+  <h2>Top Domains</h2>
+  <ul>
+    {% for d in top_domains %}
+      <li>{{ d._id }} ({{ d.count }})</li>
+    {% endfor %}
+  </ul>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const dist = {{ distribution | tojson }};
+    const labels = dist.map(d => d._id || 'unknown');
+    const data = dist.map(d => d.count);
+    const ctx = document.getElementById('riskChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{ label: 'Risk count', data: data, backgroundColor: 'rgba(255,99,132,0.2)' }]
+      }
+    });
+  </script>
+</body>
+</html>

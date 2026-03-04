@@ -1,0 +1,3 @@
+example-bad.com
+malicious.example
+phishingsite.test

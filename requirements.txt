@@ -1,0 +1,12 @@
+Flask
+flask-cors
+flask-limiter
+
+# machine learning dependencies
+scikit-learn
+xgboost
+pandas
+joblib
+
+# database & utilities
+pymongo

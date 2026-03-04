@@ -1,0 +1,11 @@
+Flask
+flask-cors
+pymongo
+joblib
+scikit-learn
+xgboost
+python-whois
+dnspython
+pyjwt
+bcrypt
+gunicorn
