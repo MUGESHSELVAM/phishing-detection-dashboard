@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{{ title }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body>
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="login-logo">
+      <span class="brand-icon">✅</span>
+      <span class="brand-name">PhishyGuard</span>
+      <div class="brand-sub">Authentication status</div>
+    </div>
+    <div class="login-success" style="margin-bottom: 14px;">{{ message }}</div>
+    <div class="login-footer"><a href="{{ url_for('auth_login') }}">Return to login</a></div>
+  </div>
+</div>
+</body>
+</html>

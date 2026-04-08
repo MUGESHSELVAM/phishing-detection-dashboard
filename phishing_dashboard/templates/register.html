@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PhishyGuard — Register</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <style>
+    .login-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); }
+    .login-card { width: 380px; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 32px; }
+    .login-logo { text-align: center; margin-bottom: 20px; }
+    .login-logo .brand-icon { font-size: 34px; display: block; margin-bottom: 4px; }
+    .login-logo .brand-name { font-size: 22px; font-weight: 700; }
+    .login-logo .brand-sub { font-size: 13px; color: var(--text2); margin-top: 4px; }
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 13px; font-weight: 500; color: var(--text2); margin-bottom: 6px; }
+    .form-input { width: 100%; padding: 10px 12px; background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 14px; outline: none; }
+    .form-input:focus { border-color: var(--blue); }
+    .btn-login { width: 100%; padding: 11px; background: var(--blue); color: #fff; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background .15s; margin-top: 8px; }
+    .btn-login:hover { background: #2563eb; }
+    .login-error { background: var(--red-bg); border: 1px solid rgba(239,68,68,.3); color: var(--red); padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 14px; }
+    .login-success { background: var(--green-bg); border: 1px solid rgba(34,197,94,.3); color: var(--green); padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 14px; }
+    .login-footer { text-align: center; color: var(--text3); font-size: 12px; margin-top: 14px; }
+  </style>
+</head>
+<body>
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="login-logo">
+      <span class="brand-icon">🛡️</span>
+      <span class="brand-name">PhishyGuard</span>
+      <div class="brand-sub">Create your account to secure your SOC</div>
+    </div>
+
+    {% if error %}
+      <div class="login-error">{{ error }}</div>
+    {% endif %}
+    {% if success %}
+      <div class="login-success">{{ success }}</div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('auth_register') }}">
+      <div class="form-group"><label class="form-label">Username</label>
+        <input class="form-input" name="username" required/></div>
+      <div class="form-group"><label class="form-label">Email</label>
+        <input class="form-input" type="email" name="email" required/></div>
+      <div class="form-group"><label class="form-label">Password</label>
+        <input class="form-input" type="password" name="password" required/></div>
+      <div class="form-group"><label class="form-label">Confirm Password</label>
+        <input class="form-input" type="password" name="confirm" required/></div>
+      <button type="submit" class="btn-login">Register</button>
+    </form>
+    <div class="login-footer">
+      Already have an account? <a href="{{ url_for('auth_login') }}">Sign in</a><br/>
+      <a href="{{ url_for('forgot_password') }}">Forgot password?</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

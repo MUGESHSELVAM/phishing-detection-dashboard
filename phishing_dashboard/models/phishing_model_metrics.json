@@ -1,0 +1,88 @@
+{
+  "accuracy": 100.0,
+  "precision": 100.0,
+  "recall": 100.0,
+  "f1_score": 100.0,
+  "auc_roc": 100.0,
+  "avg_precision": 100.0,
+  "train_samples": 156,
+  "test_samples": 39,
+  "feature_count": 38,
+  "confusion_matrix": [
+    [
+      19,
+      0
+    ],
+    [
+      0,
+      20
+    ]
+  ],
+  "cv_accuracy_mean": 98.97,
+  "cv_accuracy_std": 2.05,
+  "cv_f1_mean": 98.89,
+  "cv_auc_mean": 100.0,
+  "top_features": [
+    {
+      "name": "is_https",
+      "importance": 0.240501
+    },
+    {
+      "name": "suspicious_tld",
+      "importance": 0.176898
+    },
+    {
+      "name": "hostname_length",
+      "importance": 0.099802
+    },
+    {
+      "name": "hyphen_in_domain",
+      "importance": 0.099792
+    },
+    {
+      "name": "count_hyphens",
+      "importance": 0.0944
+    },
+    {
+      "name": "entropy_hostname",
+      "importance": 0.063342
+    },
+    {
+      "name": "url_length",
+      "importance": 0.053778
+    },
+    {
+      "name": "count_letters",
+      "importance": 0.041618
+    },
+    {
+      "name": "has_phish_keyword",
+      "importance": 0.022297
+    },
+    {
+      "name": "subdomain_count",
+      "importance": 0.020887
+    },
+    {
+      "name": "dots_in_hostname",
+      "importance": 0.020319
+    },
+    {
+      "name": "count_dots",
+      "importance": 0.014295
+    },
+    {
+      "name": "path_length",
+      "importance": 0.011113
+    },
+    {
+      "name": "digit_ratio",
+      "importance": 0.007286
+    },
+    {
+      "name": "entropy_path",
+      "importance": 0.007246
+    }
+  ],
+  "model_name": "RandomForest"
+}

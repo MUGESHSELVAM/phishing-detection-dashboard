@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PhishyGuard Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="dashboard-page">
+
+  <!-- ─── Sidebar ──────────────────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-icon">⚡</span>
+      <span class="brand-name">PhishyGuard</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-tab="overview">
+        <span class="nav-icon">📊</span> Overview
+      </a>
+      <a href="#" class="nav-item" data-tab="scanner">
+        <span class="nav-icon">🔍</span> URL Scanner
+      </a>
+      <a href="#" class="nav-item" data-tab="history">
+        <span class="nav-icon">📋</span> Scan History
+      </a>
+      <a href="#" class="nav-item" data-tab="analytics">
+        <span class="nav-icon">📈</span> Analytics
+      </a>
+      <a href="#" class="nav-item" data-tab="model">
+        <span class="nav-icon">🤖</span> Model Info
+      </a>
+      <a href="#" class="nav-item" data-tab="logs">
+        <span class="nav-icon">📝</span> Event Logs
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="model-badge" id="model-status-badge">
+        <span class="dot dot-green"></span> Model Ready
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:var(--text3)">
+        Logged in as <strong style="color:var(--text2)">{{ username }}</strong>
+      </div>
+      <a href="/logout" class="btn btn-outline btn-sm" style="margin-top:8px;width:100%;text-align:center">Sign Out</a>
+    </div>
+  </aside>
+
+  <!-- ─── Main ─────────────────────────────────────────────────────── -->
+  <main class="main-content">
+    <header class="topbar">
+      <h1 class="page-title" id="page-title">Overview</h1>
+      <div class="topbar-right">
+        <span class="topbar-time" id="topbar-time"></span>
+        <button class="btn btn-sm btn-outline" onclick="refreshAll()">↻ Refresh</button>
+        <a href="/" class="btn btn-sm btn-outline">← Home</a>
+      </div>
+    </header>
+
+    <!-- ═══ Overview ══════════════════════════════════════════════════ -->
+    <section id="tab-overview" class="tab-section active">
+      <div class="stats-row">
+        <div class="stat-card stat-blue">
+          <div class="stat-icon">🔗</div>
+          <div class="stat-body">
+            <div class="stat-value" id="stat-total">—</div>
+            <div class="stat-name">Total Scans</div>
+          </div>
+        </div>
+        <div class="stat-card stat-red">
+          <div class="stat-icon">🚨</div>
+          <div class="stat-body">
+            <div class="stat-value" id="stat-phish">—</div>
+            <div class="stat-name">Threats Detected</div>
+          </div>
+        </div>
+        <div class="stat-card stat-green">
+          <div class="stat-icon">✅</div>
+          <div class="stat-body">
+            <div class="stat-value" id="stat-legit">—</div>
+            <div class="stat-name">Legitimate URLs</div>
+          </div>
+        </div>
+        <div class="stat-card stat-amber">
+          <div class="stat-icon">📅</div>
+          <div class="stat-body">
+            <div class="stat-value" id="stat-today">—</div>
+            <div class="stat-name">Scanned Today</div>
+          </div>
+        </div>
+        <div class="stat-card stat-purple">
+          <div class="stat-icon">⚠️</div>
+          <div class="stat-body">
+            <div class="stat-value" id="stat-rate">—%</div>
+            <div class="stat-name">Detection Rate</div>
+          </div>
+        </div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card">
+          <h3 class="chart-title">Verdict Distribution</h3>
+          <canvas id="chart-donut" height="220"></canvas>
+        </div>
+        <div class="chart-card chart-wide">
+          <h3 class="chart-title">7-Day Scan Activity</h3>
+          <canvas id="chart-bar" height="220"></canvas>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-header">
+          <h3>Recent Scans</h3>
+          <button class="btn btn-sm btn-outline" onclick="switchTab('history')">View all →</button>
+        </div>
+        <div id="overview-recent"></div>
+      </div>
+    </section>
+
+    <!-- ═══ URL Scanner ════════════════════════════════════════════════ -->
+    <section id="tab-scanner" class="tab-section">
+      <div class="scanner-layout">
+        <div class="scanner-panel">
+          <h2 class="panel-title">Analyze URL</h2>
+          <p class="panel-sub">Enter any URL for ML + threat intelligence analysis.</p>
+          <div class="scan-form">
+            <input type="text" id="scan-url" placeholder="https://suspicious-site.com/login"
+                   class="scan-input" autocomplete="off"/>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);cursor:pointer">
+                <input type="checkbox" id="threat-intel-toggle" style="accent-color:var(--blue)"/>
+                Enable Threat Intelligence (VirusTotal + GSB)
+              </label>
+            </div>
+            <button class="btn btn-primary btn-full" id="scan-btn" onclick="runScan()" style="margin-top:10px">
+              Scan URL
+            </button>
+          </div>
+          <div class="example-urls" style="margin-top:16px">
+            <p class="ex-label">Try these examples:</p>
+            <button class="ex-btn" onclick="setUrl('https://www.google.com')">google.com</button>
+            <button class="ex-btn" onclick="setUrl('http://paypal-secure-verify.tk/account?id=123')">paypal phish</button>
+            <button class="ex-btn" onclick="setUrl('http://free-iphone-winner.club/claim')">prize scam</button>
+            <button class="ex-btn" onclick="setUrl('http://192.168.1.1/banking/login.php')">IP login</button>
+          </div>
+        </div>
+
+        <div class="result-panel" id="result-panel">
+          <div class="result-placeholder" id="result-placeholder">
+            <div class="placeholder-icon">🔍</div>
+            <p>Scan result will appear here</p>
+          </div>
+          <div id="scan-result" class="hidden">
+            <div id="verdict-banner" class="verdict-banner">
+              <div class="verdict-icon" id="v-icon"></div>
+              <div class="verdict-text">
+                <div class="verdict-label" id="v-label"></div>
+                <div class="verdict-url" id="v-url"></div>
+              </div>
+            </div>
+
+            <!-- Risk meter -->
+            <div class="risk-meter-box">
+              <div class="risk-meter-label">
+                <span>ML Risk Score</span>
+                <span id="risk-level-badge" class="risk-badge"></span>
+              </div>
+              <div class="risk-bar-track">
+                <div class="risk-bar-fill" id="risk-bar"></div>
+              </div>
+              <div class="risk-numbers">
+                <span id="risk-score-num" class="risk-score-big">—</span>
+                <span class="risk-denom">/ 100</span>
+                <span class="risk-conf" id="risk-conf"></span>
+              </div>
+            </div>
+
+            <!-- Probability bars -->
+            <div class="prob-row">
+              <div class="prob-item">
+                <span class="prob-label">🚨 Phishing</span>
+                <div class="prob-track"><div class="prob-fill prob-red" id="prob-phish-bar"></div></div>
+                <span class="prob-pct" id="prob-phish-pct"></span>
+              </div>
+              <div class="prob-item">
+                <span class="prob-label">✅ Legitimate</span>
+                <div class="prob-track"><div class="prob-fill prob-green" id="prob-legit-bar"></div></div>
+                <span class="prob-pct" id="prob-legit-pct"></span>
+              </div>
+            </div>
+
+            <!-- Threat intel section -->
+            <div id="threat-intel-section" class="hidden">
+              <div class="ti-header">🔬 Threat Intelligence</div>
+              <div class="ti-row" id="ti-vt"></div>
+              <div class="ti-row" id="ti-gsb"></div>
+            </div>
+
+            <!-- WHOIS / DNS enrichment -->
+            <div id="whois-section" class="hidden">
+              <div class="ti-header">🌐 Domain Intelligence</div>
+              <div id="whois-flags" class="feature-flags"></div>
+            </div>
+
+            <!-- Feature flags -->
+            <div class="ti-header" style="margin-top:14px">🔎 URL Indicators</div>
+            <div class="feature-flags" id="feature-flags"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ History ════════════════════════════════════════════════════ -->
+    <section id="tab-history" class="tab-section">
+      <div class="table-card">
+        <div class="table-header">
+          <h3>All Scan Results</h3>
+          <input type="text" id="history-search" placeholder="Search URL…"
+                 class="search-input" oninput="filterHistory()"/>
+        </div>
+        <div id="history-table-wrapper">
+          <table class="data-table" id="history-table">
+            <thead>
+              <tr><th>#</th><th>URL</th><th>Verdict</th><th>Risk</th><th>Confidence</th><th>Scanned At</th></tr>
+            </thead>
+            <tbody id="history-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Analytics ══════════════════════════════════════════════════ -->
+    <section id="tab-analytics" class="tab-section">
+      <div class="charts-row">
+        <div class="chart-card chart-wide">
+          <h3 class="chart-title">Daily Phishing vs Legitimate</h3>
+          <canvas id="chart-line" height="260"></canvas>
+        </div>
+      </div>
+      <div class="table-card">
+        <h3 class="table-title">Top Threat URLs</h3>
+        <table class="data-table">
+          <thead><tr><th>URL</th><th>Risk Score</th><th>Detected At</th></tr></thead>
+          <tbody id="top-threats-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══ Model Info ═════════════════════════════════════════════════ -->
+    <section id="tab-model" class="tab-section">
+      <div class="model-info-grid" id="model-info-grid">
+        <div class="info-placeholder">Loading model info…</div>
+      </div>
+    </section>
+
+    <!-- ═══ Logs ═══════════════════════════════════════════════════════ -->
+    <section id="tab-logs" class="tab-section">
+      <div class="table-card">
+        <div class="table-header">
+          <h3>Event Logs</h3>
+          <button class="btn btn-sm btn-outline" onclick="loadLogs()">Refresh</button>
+        </div>
+        <div id="log-container" class="log-container"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

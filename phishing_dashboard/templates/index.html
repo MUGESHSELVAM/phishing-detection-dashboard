@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PhishyGuard — ML-Powered Phishing Detection</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body class="landing-page">
+
+  <!-- ─── Nav ─────────────────────────────────────────────────────────── -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span class="brand-icon">⚡</span>
+      <span class="brand-name">PhishyGuard</span>
+    </div>
+    <div class="nav-links">
+      <a href="/dashboard" class="btn btn-primary">Open Dashboard</a>
+    </div>
+  </nav>
+
+  <!-- ─── Hero ─────────────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">Machine Learning · Random Forest · Real-Time</div>
+      <h1 class="hero-title">
+        Detect Phishing URLs<br/>
+        <span class="accent">Before They Strike</span>
+      </h1>
+      <p class="hero-subtitle">
+        Instantly analyze any URL with a 30-feature ML model trained on
+        thousands of phishing and legitimate samples. Built for SOC teams.
+      </p>
+
+      <!-- Quick scan widget on landing -->
+      <div class="quick-scan-box">
+        <div class="quick-scan-input-row">
+          <input type="text" id="landing-url" placeholder="https://example.com/suspicious-link"
+                 class="scan-input" autocomplete="off"/>
+          <button class="btn btn-primary btn-lg" onclick="quickScan()">
+            <span id="scan-btn-text">Scan URL</span>
+          </button>
+        </div>
+        <div id="landing-result" class="landing-result hidden"></div>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="stat-val" id="h-total">—</span>
+          <span class="stat-label">URLs Scanned</span>
+        </div>
+        <div class="hero-stat">
+          <span class="stat-val" id="h-phish">—</span>
+          <span class="stat-label">Threats Detected</span>
+        </div>
+        <div class="hero-stat">
+          <span class="stat-val" id="h-acc">—%</span>
+          <span class="stat-label">Model Accuracy</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Feature cards ────────────────────────────────────────────────── -->
+  <section class="features-section">
+    <h2 class="section-title">Built for Security Teams</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h3>32 URL Features</h3>
+        <p>Lexical, structural, and entropy-based attributes extracted
+           from every URL in milliseconds.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>Random Forest Model</h3>
+        <p>200-tree ensemble trained on real phishing datasets with
+           cross-validation and AUC scoring.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Live Analytics</h3>
+        <p>Real-time charts, detection trends, threat heatmaps and
+           scan history on an interactive dashboard.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Risk Scoring</h3>
+        <p>Every scan returns a 0–100 risk score with HIGH / MEDIUM / LOW
+           classification and confidence percentage.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📝</div>
+        <h3>Audit Logging</h3>
+        <p>Full request logs, model monitoring metrics, and threat analytics
+           for SOC compliance and reporting.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>REST API</h3>
+        <p>Flask-powered JSON API with clean endpoints. Integrate into your
+           existing SIEM or security toolchain in minutes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA ──────────────────────────────────────────────────────────── -->
+  <section class="cta-section">
+    <h2>Ready to protect your organization?</h2>
+    <a href="/dashboard" class="btn btn-primary btn-xl">
+      Launch Full Dashboard →
+    </a>
+  </section>
+
+  <footer class="footer">
+    <p>PhishyGuard · ML-Powered Phishing Detection · Built with Flask + Scikit-learn</p>
+  </footer>
+
+  <script>
+    // Quick scan on landing page
+    async function quickScan() {
+      const input = document.getElementById("landing-url");
+      const resultBox = document.getElementById("landing-result");
+      const btnText = document.getElementById("scan-btn-text");
+      const url = input.value.trim();
+      if (!url) { input.focus(); return; }
+
+      btnText.textContent = "Scanning…";
+      resultBox.className = "landing-result hidden";
+
+      try {
+        const res = await fetch("/api/scan", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          const v = data.verdict;
+          const cls = v === "phishing" ? "result-danger" : "result-safe";
+          const icon = v === "phishing" ? "🚨" : "✅";
+          resultBox.innerHTML = `
+            <div class="result-pill ${cls}">
+              ${icon} <strong>${v.toUpperCase()}</strong>
+              — Risk Score: <strong>${data.risk.score}</strong>/100
+              &nbsp;|&nbsp; Confidence: ${data.confidence}%
+              &nbsp;<a href="/dashboard" class="pill-link">View full analysis →</a>
+            </div>`;
+        } else {
+          resultBox.innerHTML = `<div class="result-pill result-error">❌ ${data.error}</div>`;
+        }
+        resultBox.classList.remove("hidden");
+      } catch(e) {
+        resultBox.innerHTML = `<div class="result-pill result-error">❌ Server error. Is the Flask app running?</div>`;
+        resultBox.classList.remove("hidden");
+      }
+      btnText.textContent = "Scan URL";
+    }
+
+    document.getElementById("landing-url").addEventListener("keydown", e => {
+      if (e.key === "Enter") quickScan();
+    });
+
+    // Load hero stats
+    async function loadStats() {
+      try {
+        const res = await fetch("/api/stats");
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById("h-total").textContent = data.stats.total_scans;
+          document.getElementById("h-phish").textContent = data.stats.phishing_count;
+        }
+        const mRes = await fetch("/api/model/info");
+        const mData = await mRes.json();
+        if (mData.success && mData.metrics) {
+          document.getElementById("h-acc").textContent =
+            (mData.metrics.accuracy || "—") + "%";
+        }
+      } catch {}
+    }
+    loadStats();
+  </script>
+</body>
+</html>
